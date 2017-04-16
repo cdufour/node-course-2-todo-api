@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
@@ -111,6 +112,42 @@ app.post('/users', (req, res) => {
 
 });
 
+// var authenticate = (req, res, next) => {
+//   var token = req.header('x-auth');
+//
+//   User.findByToken(token).then((user) => {
+//     if (!user) {
+//       return Promise.reject();
+//     }
+//
+//     //res.send(user);
+//     req.user = user;
+//     req.token = token;
+//     next();
+//
+//   }).catch((err) => {
+//     res.status(401).send();
+//   });
+// };
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
+});
+
+// private route first example
+// app.get('/users/me', (req, res) => {
+//   var token = req.header('x-auth');
+//
+//   User.findByToken(token).then((user) => {
+//     if (!user) {
+//       return Promise.reject();
+//     }
+//
+//     res.send(user);
+//   }).catch((err) => {
+//     res.status(401).send();
+//   });
+// });
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
