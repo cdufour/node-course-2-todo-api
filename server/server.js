@@ -95,6 +95,22 @@ app.patch('/todos/:id', (req, res) => {
   });
 });
 
+// challenge: add route for POST /users
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+  var user = new User(body);
+
+  user.save().then((doc) => {
+    return user.generateAuthToken();
+    //res.send(doc);
+  }).then((token) => {
+    res.header('x-auth', token).send(user)
+  }).catch((err) => {
+    res.status(400).send(err);
+  });
+
+});
+
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
